@@ -1,0 +1,8 @@
+.vscode/
+__pycache__
+env
+*.log
+.coverage
+htmlcov/
+node_modules/
+instructions.md
