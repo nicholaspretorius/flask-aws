@@ -13,6 +13,9 @@ phases:
     commands:
       - echo logging into ecr...
       - $(aws ecr get-login --no-include-email --region $AWS_REGION)
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-users:prod || true
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-client:builder || true
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-client:prod || true
   build:
     commands:
       - echo building and testing dev images...
@@ -24,12 +27,14 @@ phases:
       - docker-compose exec -T client npm run lint
       - docker-compose exec -T client npm run prettier:check
       - docker-compose exec -T client npm run prettier:write
-      - docker-compose exec -T client npm run test --watchAll=false
+      - docker-compose exec -T client CI=true npm run test
       - echo building prod images...
       - docker build -f services/users/Dockerfile.aws.prod -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-users:prod ./services/users
       - docker build -f services/client/Dockerfile.prod -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-client:prod --build-arg NODE_ENV=production --build-arg REACT_APP_USERS_SERVICE_URL=$REACT_APP_USERS_SERVICE_URL ./services/client
+      - docker build --cache-from $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-client:prod -f services/client/Dockerfile.prod -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-client:prod ./services/client
   post_build:
     commands:
       - echo pushing prod images to ecr...
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-users:prod
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-client:builder
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-client:prod
