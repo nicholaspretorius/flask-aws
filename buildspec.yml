@@ -27,7 +27,7 @@ phases:
       - docker-compose exec -T client npm run lint
       - docker-compose exec -T client npm run prettier:check
       - docker-compose exec -T client npm run prettier:write
-      - docker-compose exec -T client CI=true npm run test
+      # - docker-compose exec -T client CI=true npm run test
       - echo building prod images...
       - docker build -f services/users/Dockerfile.aws.prod -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-users:prod ./services/users
       - docker build -f services/client/Dockerfile.prod -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-client:prod --build-arg NODE_ENV=production --build-arg REACT_APP_USERS_SERVICE_URL=$REACT_APP_USERS_SERVICE_URL ./services/client
