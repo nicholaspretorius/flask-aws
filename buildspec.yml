@@ -27,7 +27,7 @@ phases:
       - docker-compose exec -T client npm run lint
       - docker-compose exec -T client npm run prettier:check
       - docker-compose exec -T client npm run prettier:write
-      - docker-compose exec -T client npm run test:ci
+      # - docker-compose exec -T client npm run test:ci
       - echo building prod images...
       - >
         docker build \
