@@ -2,6 +2,7 @@ version: 0.2
 
 env:
   variables:
+    AWS_ACCOUNT_ID: "839211811792"
     AWS_REGION: "eu-west-1"
     REACT_APP_USERS_SERVICE_URL: "http://localhost:5001"
 
