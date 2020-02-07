@@ -2,7 +2,6 @@ version: 0.2
 
 env:
   variables:
-    AWS_ACCOUNT_ID: "839211811792"
     AWS_REGION: "eu-west-1"
     REACT_APP_USERS_SERVICE_URL: "http://localhost:5001"
 
@@ -12,11 +11,11 @@ phases:
       docker: 18
   pre_build:
     commands:
-      - echo logging into ecr...
+      - echo logging in to ecr...
       - $(aws ecr get-login --no-include-email --region $AWS_REGION)
-    #   - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-users:prod || true
-    #   - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-client:builder || true
-    #   - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-client:prod || true
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-users:prod || true
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-client:builder || true
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/flask-aws-client:prod || true
   build:
     commands:
       - echo building and testing dev images...
@@ -28,7 +27,6 @@ phases:
       - docker-compose exec -T client npm run lint
       - docker-compose exec -T client npm run prettier:check
       - docker-compose exec -T client npm run prettier:write
-      # - docker-compose exec -T client npm run test:ci
       - echo building prod images...
       - >
         docker build \
